@@ -274,6 +274,38 @@ class ModelManager implements ModelManagerInterface
     /**
      * {@inheritdoc}
      */
+//    public function getIdentifierValues($entity)
+//    {
+//        $entityManager = $this->getEntityManager($entity);
+//
+//        if (!$entityManager->getUnitOfWork()->isInIdentityMap($entity)) {
+//            throw new \RuntimeException('Entities passed to the choice field must be managed');
+//        }
+//
+//        $class = $this->getMetadata(ClassUtils::getClass($entity));
+//
+//        $identifiers = array();
+//
+//        foreach ($class->getIdentifierValues($entity) as $value) {
+//            if (!is_object($value)) {
+//                $identifiers[] = $value;
+//                continue;
+//            }
+//
+//            $class = $this->getMetadata(ClassUtils::getClass($value));
+//
+//            foreach ($class->getIdentifierValues($value) as $value) {
+//                $identifiers[] = $value;
+//            }
+//        }
+//
+//        return $identifiers;
+//    }
+    
+    // 2z rollback
+    /**
+     * {@inheritdoc}
+     */
     public function getIdentifierValues($entity)
     {
         $entityManager = $this->getEntityManager($entity);
@@ -282,24 +314,7 @@ class ModelManager implements ModelManagerInterface
             throw new \RuntimeException('Entities passed to the choice field must be managed');
         }
 
-        $class = $this->getMetadata(ClassUtils::getClass($entity));
-
-        $identifiers = array();
-
-        foreach ($class->getIdentifierValues($entity) as $value) {
-            if (!is_object($value)) {
-                $identifiers[] = $value;
-                continue;
-            }
-
-            $class = $this->getMetadata(ClassUtils::getClass($value));
-
-            foreach ($class->getIdentifierValues($value) as $value) {
-                $identifiers[] = $value;
-            }
-        }
-
-        return $identifiers;
+        return $entityManager->getUnitOfWork()->getEntityIdentifier($entity);
     }
 
     /**
