@@ -98,6 +98,34 @@ class ProxyQuery implements ProxyQueryInterface
             $sortBy .= ' AS __order_by';
             $queryBuilderId->addSelect($sortBy);
         }
+        
+        // 2z ->
+        // aggiunta patch per gestire ordinamenti custom
+        // fuori dall'admin
+        // (aggiunge in automatico in select le condizioni di order by)
+        $order_by_parts = $queryBuilderId->getDQLPart('orderBy');
+        if($order_by_parts && count($order_by_parts))
+        {
+            foreach($order_by_parts as $or)
+            {
+                foreach($or->getParts() as $p) {
+                    
+                    $string_order = $p;
+                
+                    // se si tratta di un ordine per id lo salto
+                    if(strpos($string_order, '.id ') !== false) {
+                        
+                        continue;
+                    }
+                    
+                    $string_order = str_replace(' ASC', '', $string_order);
+                    $string_order = str_replace(' DESC', '', $string_order);
+
+                    $queryBuilderId->addSelect($string_order);
+                }
+            } 
+        }
+        // fine patch
 
         $results    = $queryBuilderId->getQuery()->execute(array(), Query::HYDRATE_ARRAY);
         $idx        = array();
