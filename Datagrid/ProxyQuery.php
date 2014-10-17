@@ -80,8 +80,26 @@ class ProxyQuery implements ProxyQueryInterface
 
         // step 3 : retrieve the different subjects id
         $select = sprintf('%s.%s', $queryBuilderId->getRootAlias(), $idName);
+        
+        // il reset della select non deve resettare eventuali hidden aggiunti per sort
+        // la condizione è stringa HIDDEN e colonna sortCondition
+        $old_select = implode(',', $queryBuilderId->getDQLPart('select'));
+        $persist_select = "";
+        if(strpos($old_select, ' HIDDEN ') !== false) {
+            
+            $hidden_pos = strpos($old_select, ' HIDDEN ');
+            
+            $first_part = substr($old_select, 0, $hidden_pos);
+            $first_part = substr($first_part, strrpos($first_part, 'CASE'), $hidden_pos);
+            
+            $last_part = substr($old_select, $hidden_pos);
+            $last_part = substr($last_part, 0, strpos($last_part, 'sortCondition') + 14);
+            
+            $persist_select = ', '.$first_part.$last_part;
+        }
+
         $queryBuilderId->resetDQLPart('select');
-        $queryBuilderId->add('select', 'DISTINCT ' . $select);
+        $queryBuilderId->add('select', 'DISTINCT ' . $select.$persist_select);
 
         // for SELECT DISTINCT, ORDER BY expressions must appear in select list
         /* Consider
@@ -113,7 +131,8 @@ class ProxyQuery implements ProxyQueryInterface
                     $string_order = $p;
                 
                     // se si tratta di un ordine per id lo salto
-                    if(strpos($string_order, '.id ') !== false) {
+                    // ed anche se si tratta di una sortCondition
+                    if(strpos($string_order, '.id ') !== false || strpos($string_order, 'sortCondition') !== false) {
                         
                         continue;
                     }
