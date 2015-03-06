@@ -12,9 +12,9 @@ file that was distributed with this source code.
 {% extends admin.getTemplate('base_list_field') %}
 
 {% block field %}
-    {% if field_description.hasassociationadmin and field_description.associationadmin.hasRoute('EDIT') %}
+    {% if field_description.hasassociationadmin and field_description.associationadmin.hasRoute('VIEW') %}
         {% for element in value%}
-            {%- if field_description.associationadmin.isGranted('edit', value) -%}
+            {%- if field_description.associationadmin.isGranted('show', value) -%}
                 {{ block('relation_link') }}
             {%- else -%}
                 {{ block('relation_value') }}
@@ -29,7 +29,7 @@ file that was distributed with this source code.
 {% endblock %}
 
 {%- block relation_link -%}
-    <a href="{{ field_description.associationadmin.generateObjectUrl(field_description.options.route.name, element, field_description.options.route.parameters) }}">{{ element|render_relation_element(field_description) }}</a>
+    <a target='_blank' href="{{ field_description.associationadmin.generateObjectUrl('show', element, field_description.options.route.parameters) }}">{{ element|render_relation_element(field_description) }}</a>
 {%- endblock -%}
 
 {%- block relation_value -%}

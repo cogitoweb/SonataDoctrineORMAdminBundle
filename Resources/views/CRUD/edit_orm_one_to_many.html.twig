@@ -13,7 +13,6 @@ file that was distributed with this source code.
         {{ element|render_relation_element(sonata_admin.field_description) }}
     {% endfor %}
 {% else %}
-
     <div id="field_container_{{ id }}" class="field-container">
         <span id="field_widget_{{ id }}" >
             {% if sonata_admin.edit == 'inline' %}
@@ -24,7 +23,7 @@ file that was distributed with this source code.
                                 <tr>
                                     {% for field_name, nested_field in form.children|first.children %}
                                         {% if field_name == '_delete' %}
-                                            <th>{{ 'action_delete'|trans({}, 'SonataAdminBundle') }}</th>
+                                            <th>{# 'action_delete'|trans({}, 'SonataAdminBundle') #}</th>
                                         {% else %}
                                             <th {{ nested_field.vars['required']  ? 'class="required"' : '' }}{% if (nested_field.vars['attr']['hidden'] is defined) and (nested_field.vars['attr']['hidden']) %} style="display:none;"{% endif %}>
                                                 {{ nested_field.vars['sonata_admin'].admin.trans(nested_field.vars.label) }}
@@ -37,7 +36,7 @@ file that was distributed with this source code.
                                 {% for nested_group_field_name, nested_group_field in form.children %}
                                     <tr>
                                         {% for field_name, nested_field in nested_group_field.children %}
-                                            <td class="sonata-ba-td-{{ id }}-{{ field_name  }} control-group{% if nested_field.vars.errors|length > 0 %} error{% endif %}"{% if (nested_field.vars['attr']['hidden'] is defined) and (nested_field.vars['attr']['hidden']) %} style="display:none;"{% endif %}>
+                                            <td class="sonata-ba-td-{{ id }}-{{ field_name  }} control-group{% if nested_field.vars.errors|length > 0 %} error{% endif %}{% if field_name == '_delete' %} delete-check{% endif %}"{% if (nested_field.vars['attr']['hidden'] is defined) and (nested_field.vars['attr']['hidden']) %} style="display:none;"{% endif %}>
                                                 {% if sonata_admin.field_description.associationadmin.formfielddescriptions[field_name] is defined %}
                                                     {{ form_widget(nested_field) }}
 
@@ -49,6 +48,10 @@ file that was distributed with this source code.
                                                     <div class="help-inline sonata-ba-field-error-messages">
                                                         {{ form_errors(nested_field) }}
                                                     </div>
+                                                {% endif %}
+                                                
+                                                {% if field_name == '_delete' %}
+                                                <button class="btn delete_link btn-small fake-check"><i class="icon-remove"></i></button>
                                                 {% endif %}
                                             </td>
                                         {% endfor %}
@@ -119,7 +122,7 @@ file that was distributed with this source code.
                         title="{{ btn_add|trans({}, btn_catalogue) }}"
                         >
                         <i class="icon-plus"></i>
-                        {{ btn_add|trans({}, btn_catalogue) }}
+                        
                     </a>
                 </span>
             {% endif %}
@@ -172,7 +175,7 @@ file that was distributed with this source code.
                         title="{{ btn_add|trans({}, btn_catalogue) }}"
                         >
                         <i class="icon-plus"></i>
-                        {{ btn_add|trans({}, btn_catalogue) }}
+                        
                     </a>
                 {% endif %}
             </span>
