@@ -58,7 +58,9 @@ abstract class AbstractDateFilter extends Filter
                 $this->applyWhere($queryBuilder, sprintf('%s.%s %s :%s', $alias, $field, '>=', $startDateParameterName));
                 $this->applyWhere($queryBuilder, sprintf('%s.%s %s :%s', $alias, $field, '<=', $endDateParameterName));
             }
-
+			var_dump($data['value']['start']);
+			var_dump($data['value']['end']);
+			exit();
             $queryBuilder->setParameter($startDateParameterName,  $data['value']['start']);
             $queryBuilder->setParameter($endDateParameterName,  $data['value']['end']);
         } else {
