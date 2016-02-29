@@ -59,6 +59,11 @@ abstract class AbstractDateFilter extends Filter
                 $this->applyWhere($queryBuilder, sprintf('%s.%s %s :%s', $alias, $field, '<=', $endDateParameterName));
             }
 
+			// compatibility with database datetime format
+			if (!$this->time) {
+				$data['value']['end']->setTime(23, 59, 59);
+			}
+
             $queryBuilder->setParameter($startDateParameterName,  $data['value']['start']);
             $queryBuilder->setParameter($endDateParameterName,  $data['value']['end']);
         } else {
