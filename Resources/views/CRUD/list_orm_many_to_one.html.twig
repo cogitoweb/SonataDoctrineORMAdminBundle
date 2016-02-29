@@ -12,7 +12,7 @@ file that was distributed with this source code.
 {% extends admin.getTemplate('base_list_field') %}
 
 {% block field %}
-    {% if value %}
+    {% if value and field_description.associationadmin.getUrlsafeIdentifier(value) %}
         {% if field_description.hasAssociationAdmin and field_description.associationadmin.hasRoute('show') and field_description.associationadmin.isGranted('VIEW', value) %}
             <a target='_blank' href="{{ field_description.associationadmin.generateObjectUrl('show', value, field_description.options.route.parameters) }}">{{ value|render_relation_element(field_description) }}</a>
         {% else %}
